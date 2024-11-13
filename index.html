@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.5.0/firebase-app-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.5.0/firebase-auth-compat.js"></script>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Login Form -->
+    <div id="loginForm" class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Admin Login</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                        Email Address
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Enter your password">
+                </div>
+                <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden min-h-screen bg-gray-100">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <span class="text-xl font-semibold text-gray-800">Admin Dashboard</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span id="userEmail" class="mr-4 text-gray-600"></span>
+                        <button id="logoutBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Total Users</h3>
+                    <p class="text-3xl font-bold text-blue-600">1,234</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Active Sessions</h3>
+                    <p class="text-3xl font-bold text-green-600">56</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">New Users Today</h3>
+                    <p class="text-3xl font-bold text-purple-600">12</p>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">New user registration</p>
+                                <p class="text-sm text-gray-500">john.doe@example.com</p>
+                            </div>
+                            <span class="text-sm text-gray-500">5 minutes ago</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Login attempt</p>
+                                <p class="text-sm text-gray-500">jane.smith@example.com</p>
+                            </div>
+                            <span class="text-sm text-gray-500">10 minutes ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Firebase configuration - Replace with your config
+        const firebaseConfig = {
+            apiKey: "AIzaSyADoYi4TZlCu2bPu50PNYyzDHm8W2f-370",
+            authDomain: "zoya-33562.firebaseapp.com",
+            projectId: "zoya-33562",
+            storageBucket: "zoya-33562.firebasestorage.app",
+            messagingSenderId: "1008680026774",
+            appId: "1:1008680026774:web:e178d102d8872457e0b8b7",
+            measurementId: "G-QSMWLKY8YH"
+        };
+
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const loginDiv = document.getElementById('loginForm');
+        const dashboardDiv = document.getElementById('adminDashboard');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userEmailSpan = document.getElementById('userEmail');
+
+        // Login form submit handler
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .catch((error) => {
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        // Logout handler
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // Auth state change listener
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                loginDiv.classList.add('hidden');
+                dashboardDiv.classList.remove('hidden');
+                userEmailSpan.textContent = user.email;
+            } else {
+                // User is signed out
+                loginDiv.classList.remove('hidden');
+                dashboardDiv.classList.add('hidden');
+                userEmailSpan.textContent = '';
+            }
+        });
+    </script>
+</body>
+
+</html>
